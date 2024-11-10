@@ -20,6 +20,9 @@ magical_pets = [
     Pet(id=3, name="Shadow", species="Phoenix", magical_ability="Resurrects from ashes", age=1000)
 ]
 
+# Add this variable to track highest ID (initialize based on our starter pets)
+current_max_id = 3
+
 # Get all pets
 @app.get("/pets", response_model=List[Pet])
 async def get_all_pets():
@@ -33,11 +36,12 @@ async def get_pet(pet_id: int):
             return pet
     raise HTTPException(status_code=404, detail="Pet not found")
 
-## TODO: investigate id collision bug if pets are adopted
 # Add a new pet
 @app.post("/pets", response_model=Pet)
 async def create_pet(pet: Pet):
-    pet.id = len(magical_pets) + 1
+    global current_max_id
+    current_max_id += 1
+    pet.id = current_max_id
     magical_pets.append(pet)
     return pet
 
